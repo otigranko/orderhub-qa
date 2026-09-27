@@ -2,13 +2,13 @@ import csv
 import io
 import json
 import random
-import time
 import uuid
 
 import pytest
 import requests
 
 from harness import config
+from harness.checks import assert_dispatched_once
 from harness.client import wait_until
 
 pytestmark = pytest.mark.smoke
@@ -40,19 +40,12 @@ def test_webhook_example_creates_order_and_dispatches(hub, robot):
     assert order["platform"] == payload["order_source"]
     assert [i["name"] for i in order["items"]] == payload["items"]
 
-    # Live orders are ready immediately, so the dispatcher should pick it up within a tick or two.
-    wait_until(lambda: robot.dispatches_for(order_id), message=f"order {order_id} never reached the robot")
+    # Live orders are ready immediately: the robot should get it exactly once, with the right contents.
+    assert_dispatched_once(robot, order_id)
     assert hub.get_order(order_id).json()["status"] == "dispatched"
-
-    # The robot got the right order...
     sent = robot.dispatches_for(order_id)[0]
     assert sent["customer"] == f"{payload['first_name']} {payload['last_name']}"
     assert [i["name"] for i in sent["items"]] == payload["items"]
-
-    # ...and only once. We can't wait for something to NOT happen, so give a duplicate
-    # a few dispatcher cycles (1s each) to show up, then count.
-    time.sleep(3)
-    assert len(robot.dispatches_for(order_id)) == 1
 
 
 def test_partner_api_example_is_polled_into_an_order(hub, partner):

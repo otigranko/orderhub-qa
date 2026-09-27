@@ -10,9 +10,12 @@ The plan and the reasoning behind it are in [TEST_STRATEGY.md](TEST_STRATEGY.md)
 harness/          reusable test tooling
   config.py       paths, ports and timeouts (env-var overridable)
   client.py       HTTP clients for OrderHub and the mock partner API, wait helper
+  builders.py     valid orders with unique ids, easy to change per test
+  checks.py       "reached the robot exactly once" and "never reached the robot"
   robot_sink.py   stands in for the robot and records every dispatch it receives
   services.py     starts OrderHub and the mock partner API for a test run
 tests/            pytest suites
+defects/          defects.xlsx: every defect found, with steps, data and evidence
 data/corpus/      bad-data files, sent as raw bytes
 data/scenarios/   named static scenarios
 results/          logs and database from the last run (not committed)
@@ -48,6 +51,24 @@ You don't need to start OrderHub yourself. Each test run starts its own OrderHub
 partner API on a fresh database, with robot dispatches sent to a receiver inside the test run.
 Everything is stopped when the run ends. It uses different ports from `make run`, so you can
 keep your own instance running at the same time.
+
+### Known defects in the test run
+
+Tests that reproduce a known bug are marked `xfail` with the defect id from
+`defects/defects.xlsx`, for example `L37-001`. They show up as `xfailed` instead of failing
+the run, so the suite stays green while the bugs are open, and still tells you each bug is there:
+
+```
+6 passed, 5 xfailed
+```
+
+They use `strict=True`: when a bug is fixed, its test starts passing, pytest reports it as a
+failure, and that's the reminder to remove the marker and close the defect. To see the real
+failure output for the known bugs:
+
+```sh
+python -m pytest --runxfail
+```
 
 After a run, `results/` holds OrderHub's log, the mock's log, and the database. Useful for
 debugging a failure or attaching to a defect report.
