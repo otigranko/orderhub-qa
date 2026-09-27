@@ -2,6 +2,7 @@ import csv
 import io
 import json
 import random
+import time
 import uuid
 
 import pytest
@@ -20,12 +21,12 @@ def load_example(rel_path):
     return path.read_text()
 
 
-def test_services_are_up():
+def test_services_are_up(services):
     assert requests.get(f"{config.ORDERHUB_URL}/healthz", timeout=5).status_code == 200
     assert requests.get(f"{config.MOCK_API_URL}/status", timeout=5).status_code == 200
 
 
-def test_webhook_example_creates_order_and_dispatches(hub):
+def test_webhook_example_creates_order_and_dispatches(hub, robot):
     payload = json.loads(load_example("webhook/new_order.json"))
     payload["order_id"] = f"smoke-{uuid.uuid4().hex[:10]}"
 
@@ -40,8 +41,18 @@ def test_webhook_example_creates_order_and_dispatches(hub):
     assert [i["name"] for i in order["items"]] == payload["items"]
 
     # Live orders are ready immediately, so the dispatcher should pick it up within a tick or two.
-    wait_until(lambda: hub.get_order(order_id).json()["status"] == "dispatched",
-               message=f"order {order_id} was not dispatched")
+    wait_until(lambda: robot.dispatches_for(order_id), message=f"order {order_id} never reached the robot")
+    assert hub.get_order(order_id).json()["status"] == "dispatched"
+
+    # The robot got the right order...
+    sent = robot.dispatches_for(order_id)[0]
+    assert sent["customer"] == f"{payload['first_name']} {payload['last_name']}"
+    assert [i["name"] for i in sent["items"]] == payload["items"]
+
+    # ...and only once. We can't wait for something to NOT happen, so give a duplicate
+    # a few dispatcher cycles (1s each) to show up, then count.
+    time.sleep(3)
+    assert len(robot.dispatches_for(order_id)) == 1
 
 
 def test_partner_api_example_is_polled_into_an_order(hub, partner):

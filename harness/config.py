@@ -3,15 +3,26 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
-# OrderHub service (UI + API) and the mock partner API it polls.
-ORDERHUB_URL = os.environ.get("ORDERHUB_URL", "http://localhost:8080").rstrip("/")
-MOCK_API_URL = os.environ.get("MOCK_API_URL", "http://localhost:8090").rstrip("/")
-
-# Path to the OrderHub checkout. Used to read the provided example payloads
-# (we reference them instead of copying them into this repo).
+# Path to the OrderHub checkout. We run its built binaries (`make build`) and read
+# the provided example payloads from it.
 ORDERHUB_DIR = Path(os.environ.get("ORDERHUB_DIR", REPO_ROOT.parent / "orderhub")).resolve()
 EXAMPLES_DIR = ORDERHUB_DIR / "data" / "examples"
+ORDERHUB_BIN = ORDERHUB_DIR / "bin" / "orderhub"
+MOCK_API_BIN = ORDERHUB_DIR / "bin" / "mockapi"
+FRONTEND_DIR = ORDERHUB_DIR / "frontend" / "dist"
+
+# The tests start their own OrderHub, mock partner API and robot receiver on these ports.
+# They are different from `make run` (8080/8090), so both can run at the same time.
+ORDERHUB_PORT = int(os.environ.get("ORDERHUB_PORT", "18080"))
+MOCK_API_PORT = int(os.environ.get("MOCK_API_PORT", "18090"))
+ROBOT_PORT = int(os.environ.get("ROBOT_PORT", "18181"))
+
+ORDERHUB_URL = f"http://127.0.0.1:{ORDERHUB_PORT}"
+MOCK_API_URL = f"http://127.0.0.1:{MOCK_API_PORT}"
+
+# Where OrderHub's logs and database for a test run go. Kept after the run for debugging.
+RESULTS_DIR = REPO_ROOT / "results"
 
 # How long to wait for asynchronous work. The partner API is polled every 2s and the
-# dispatcher runs every 1s by default, so a few poll cycles is plenty.
+# dispatcher runs every 1s by default, so a few cycles is plenty.
 DEFAULT_TIMEOUT = float(os.environ.get("QA_TIMEOUT", "10"))
