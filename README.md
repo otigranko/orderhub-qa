@@ -3,6 +3,7 @@
 Test strategy, harness, and automated tests for OrderHub (order ingestion and dispatch).
 
 The plan and the reasoning behind it are in [TEST_STRATEGY.md](TEST_STRATEGY.md).
+How I used AI is in [AI_USAGE.md](AI_USAGE.md).
 
 ## Layout
 
