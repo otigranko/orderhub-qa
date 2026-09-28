@@ -64,3 +64,4 @@ decided, and I'm happy to walk through the session in the interview.
 | 3 | Tests start their own OrderHub; robot receiver checks exactly-once dispatch | Add server to run with tests |
 | 4 | Webhook tests; defects L37-001 to L37-004 | Add defects, add test |
 | 5 | Partner API tests; defects L37-005 to L37-009 | Partner API tests and defects L37-005 to L37-009 |
+| 6 | Dispatch tests with a slow or failing robot; defects L37-010 to L37-012 | Dispatch tests and defects L37-010 to L37-012 |

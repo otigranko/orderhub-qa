@@ -36,6 +36,10 @@ class OrderHubClient:
     def get_order(self, order_id):
         return self.http.get(f"{self.base}/api/orders/{order_id}", timeout=self.timeout)
 
+    # What an operator does with "Cancel" in the UI.
+    def cancel(self, order_id):
+        return self.http.post(f"{self.base}/api/orders/{order_id}/cancel", timeout=self.timeout)
+
     def find_by_external(self, source, external_id):
         return [o for o in self.all_orders(source=source) if o["external_id"] == str(external_id)]
 

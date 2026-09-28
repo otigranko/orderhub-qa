@@ -13,7 +13,7 @@ harness/          reusable test tooling
   client.py       HTTP clients for OrderHub and the mock partner API, wait helper
   builders.py     valid orders with unique ids, easy to change per test
   checks.py       "reached the robot exactly once" and "never reached the robot"
-  robot_sink.py   stands in for the robot and records every dispatch it receives
+  robot_sink.py   stands in for the robot: records every dispatch, can be made slow or reject orders
   services.py     starts OrderHub and the mock partner API for a test run
 tests/            pytest suites
 defects/          defects.xlsx: every defect found, with steps, data and evidence
@@ -60,7 +60,7 @@ Tests that reproduce a known bug are marked `xfail` with the defect id from
 the run, so the suite stays green while the bugs are open, and still tells you each bug is there:
 
 ```
-8 passed, 10 xfailed
+9 passed, 14 xfailed
 ```
 
 They use `strict=True`: when a bug is fixed, its test starts passing, pytest reports it as a

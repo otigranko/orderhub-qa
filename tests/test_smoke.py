@@ -21,7 +21,8 @@ def load_example(rel_path):
     return path.read_text()
 
 
-def test_services_are_up(services):
+@pytest.mark.usefixtures("services")
+def test_services_are_up():
     assert requests.get(f"{config.ORDERHUB_URL}/healthz", timeout=5).status_code == 200
     assert requests.get(f"{config.MOCK_API_URL}/status", timeout=5).status_code == 200
 

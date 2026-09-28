@@ -39,3 +39,10 @@ def hub(services):
 @pytest.fixture(scope="session")
 def partner(services):
     return MockPartnerClient()
+
+
+# Tests can make the robot slow or reject orders. Put it back to normal after every test.
+@pytest.fixture(autouse=True)
+def normal_robot(robot):
+    yield
+    robot.behave()
