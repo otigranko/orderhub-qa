@@ -8,6 +8,7 @@ decided, and I'm happy to walk through the session in the interview.
 
 ## Start
 
+- Used Opus 5.5. Switched effort from Medium to High
 - Present tech stack: Python, Pytest, requests + UI tests
 
 ## What Claude did
@@ -53,7 +54,8 @@ decided, and I'm happy to walk through the session in the interview.
 - Ran each step's tests on my own machine before committing.
 - Asked for an explanation of every piece of code I didn't understand, and removed what I
   couldn't justify.
-- Checked that each defect's steps reproduce against `make run`. Check data used in defects.
+- Checked that each defect's steps reproducible against `make run`. Check data used in defects.
+- Update steps and data in Excel 
 
 ## Log by step
 
