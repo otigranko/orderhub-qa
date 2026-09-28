@@ -60,7 +60,7 @@ Tests that reproduce a known bug are marked `xfail` with the defect id from
 the run, so the suite stays green while the bugs are open, and still tells you each bug is there:
 
 ```
-6 passed, 5 xfailed
+8 passed, 10 xfailed
 ```
 
 They use `strict=True`: when a bug is fixed, its test starts passing, pytest reports it as a
@@ -71,7 +71,30 @@ failure output for the known bugs:
 python -m pytest --runxfail
 ```
 
-After a run, `results/` holds OrderHub's log, the mock's log, and the database. Useful for
+### Running against `make run`
+
+To run the tests against your own OrderHub instead, for example to watch orders appear in the
+UI or to re-check a defect, start it so it sends robot dispatches to the test run's receiver:
+
+```sh
+cd ../orderhub
+make reset
+ORDERHUB_ROBOT_URL=http://127.0.0.1:18181/dispatch make run
+```
+
+Then, in this repo:
+
+```sh
+QA_EXTERNAL=1 python -m pytest                                   # everything
+QA_EXTERNAL=1 python -m pytest --runxfail -k same_order_id       # one known bug, real failure output
+```
+
+In this mode the tests use OrderHub on 8080 and the mock on 8090, and only start the robot
+receiver. Every test uses unique ids, so data already in your database doesn't get in the way.
+When no test run is active, nothing listens on 18181, so orders you send by hand stay `queued`.
+For the curl steps in `defects/defects.xlsx`, use plain `make run` instead.
+
+After a normal run, `results/` holds OrderHub's log, the mock's log, and the database. Useful for
 debugging a failure or attaching to a defect report.
 
 ## Configuration
@@ -79,7 +102,8 @@ debugging a failure or attaching to a defect report.
 | Variable | Default | Meaning |
 | --- | --- | --- |
 | `ORDERHUB_DIR` | `../orderhub` | OrderHub checkout (binaries and example payloads) |
-| `ORDERHUB_PORT` | `18080` | Port for the OrderHub the tests start |
-| `MOCK_API_PORT` | `18090` | Port for the mock partner API the tests start |
+| `QA_EXTERNAL` | not set | `1` runs against an OrderHub that is already running (see above) |
+| `ORDERHUB_PORT` | `18080` (`8080` with `QA_EXTERNAL=1`) | OrderHub port |
+| `MOCK_API_PORT` | `18090` (`8090` with `QA_EXTERNAL=1`) | Mock partner API port |
 | `ROBOT_PORT` | `18181` | Port for the robot receiver |
 | `QA_TIMEOUT` | `10` | Seconds to wait for async outcomes (polling, dispatch) |

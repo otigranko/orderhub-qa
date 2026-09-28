@@ -6,6 +6,10 @@ my project folder.
 I haven't included the full session transcript. This page summarizes how I used AI and what I
 decided, and I'm happy to walk through the session in the interview.
 
+## Start
+
+- Present tech stack: Python, Pytest, requests + UI tests
+
 ## What Claude did
 
 - Read QA_HOMEWORK.md, the OrderHub README and the job description, and proposed a first
@@ -15,7 +19,6 @@ decided, and I'm happy to walk through the session in the interview.
   these were only leads to test.
 - Reproduced suspected bugs through the API and captured the evidence: HTTP responses,
   order history, robot dispatches and OrderHub logs.
-- Explained Python and pytest features when I asked.
 
 ## What I decided
 
@@ -34,6 +37,8 @@ decided, and I'm happy to walk through the session in the interview.
   a way to capture what is sent to the robot, and a file can't simulate a slow or failing robot.
 - The defect format: one spreadsheet, `defects/defects.xlsx`, with IDs `L37-001` and up, and
   the columns I chose.
+- Suggested ability to tests (failed tests specifically) to run against localhost:8080 (make run). 
+  This way don't have to curl but can run tests against local and watch queue
 
 ## Suggestions from Claude that I kept
 
@@ -58,3 +63,4 @@ decided, and I'm happy to walk through the session in the interview.
 | 2 | Test strategy draft: what we protect, risks R1 to R14, approach | Add test strategy |
 | 3 | Tests start their own OrderHub; robot receiver checks exactly-once dispatch | Add server to run with tests |
 | 4 | Webhook tests; defects L37-001 to L37-004 | Add defects, add test |
+| 5 | Partner API tests; defects L37-005 to L37-009 | Partner API tests and defects L37-005 to L37-009 |

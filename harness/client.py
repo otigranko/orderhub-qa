@@ -49,6 +49,12 @@ class MockPartnerClient:
     def enqueue(self, response):
         return self.http.post(f"{self.base}/enqueue", json=response, timeout=self.timeout)
 
+    # How many responses the mock has recorded, and how many of them are failures.
+    def status(self):
+        r = self.http.get(f"{self.base}/status", timeout=self.timeout)
+        r.raise_for_status()
+        return r.json()
+
 
 def wait_until(check, timeout=config.DEFAULT_TIMEOUT, interval=0.25, message="condition not met"):
     deadline = time.monotonic() + timeout
