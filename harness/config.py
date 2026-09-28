@@ -27,6 +27,9 @@ MOCK_API_URL = f"http://127.0.0.1:{MOCK_API_PORT}"
 # The kitchen's time zone. Must match OrderHub's -site-tz, which defaults to this.
 SITE_TZ = os.environ.get("SITE_TZ", "America/New_York")
 
+# Bad-data files, sent to OrderHub as raw bytes.
+CORPUS_DIR = REPO_ROOT / "data" / "corpus"
+
 # Where OrderHub's logs and database for a test run go. Kept after the run for debugging.
 RESULTS_DIR = REPO_ROOT / "results"
 

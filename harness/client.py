@@ -13,8 +13,17 @@ class OrderHubClient:
     def post_webhook(self, payload):
         return self.http.post(f"{self.base}/webhooks/orders", json=payload, timeout=self.timeout)
 
+    # For bad data. Sends the body exactly as given, so it can be broken JSON.
+    def post_webhook_raw(self, body):
+        return self.http.post(f"{self.base}/webhooks/orders", data=body,
+                              headers={"Content-Type": "application/json"}, timeout=self.timeout)
+
     def upload_csv(self, csv_text):
-        return self.http.post(f"{self.base}/uploads/csv", data=csv_text.encode("utf-8"),
+        return self.upload_csv_raw(csv_text.encode("utf-8"))
+
+    # Sends the file exactly as given, byte for byte.
+    def upload_csv_raw(self, body):
+        return self.http.post(f"{self.base}/uploads/csv", data=body,
                               headers={"Content-Type": "text/csv"}, timeout=self.timeout)
 
     # read
@@ -40,6 +49,8 @@ class OrderHubClient:
     def cancel(self, order_id):
         return self.http.post(f"{self.base}/api/orders/{order_id}/cancel", timeout=self.timeout)
 
+    # Every order has two ids: "id" and external_id (webhook "order_id" and partner api "order" as number)
+    # Finds orders by the sender's id; the list length shows lost (0) or duplicate (2+) orders.
     def find_by_external(self, source, external_id):
         return [o for o in self.all_orders(source=source) if o["external_id"] == str(external_id)]
 

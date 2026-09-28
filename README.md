@@ -13,12 +13,12 @@ harness/          reusable test tooling
   client.py       HTTP clients for OrderHub and the mock partner API, wait helper
   builders.py     valid orders with unique ids, easy to change per test
   checks.py       "reached the robot exactly once" and "never reached the robot"
+  corpus.py       reads a bad-data file and gives it unique ids
   robot_sink.py   stands in for the robot: records every dispatch, can be made slow or reject orders
   services.py     starts OrderHub and the mock partner API for a test run
 tests/            pytest suites
 defects/          defects.xlsx: every defect found, with steps, data and evidence
-data/corpus/      bad-data files, sent as raw bytes
-data/scenarios/   named static scenarios
+data/corpus/      bad-data files, sent as raw bytes (see "Bad-data corpus" below)
 results/          logs and database from the last run (not committed)
 ```
 
@@ -60,7 +60,7 @@ Tests that reproduce a known bug are marked `xfail` with the defect id from
 the run, so the suite stays green while the bugs are open, and still tells you each bug is there:
 
 ```
-13 passed, 22 xfailed
+27 passed, 32 xfailed
 ```
 
 They use `strict=True`: when a bug is fixed, its test starts passing, pytest reports it as a
@@ -96,6 +96,18 @@ For the curl steps in `defects/defects.xlsx`, use plain `make run` instead.
 
 After a normal run, `results/` holds OrderHub's log, the mock's log, and the database. Useful for
 debugging a failure or attaching to a defect report.
+
+### Bad-data corpus
+
+`data/corpus/webhook/` and `data/corpus/csv/` hold one file per bad input: broken JSON, a
+comma in a JSON key, CSV fields with quotes, commas and new lines, a byte order mark, and so on.
+`tests/test_bad_data.py` sends each file byte for byte and says what OrderHub should do with it.
+Where a file needs its own order id or name it has `UNIQUE`, which is replaced with a new value
+each time, so the same file can be sent again. `.gitattributes` stops Git from changing the
+files' line endings. To add a case, add a file and add its name to the matching test.
+
+Partner API cases are built in `tests/test_partner_api.py` instead, because the mock partner API
+only accepts valid JSON.
 
 ## Configuration
 

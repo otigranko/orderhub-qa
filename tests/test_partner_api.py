@@ -124,3 +124,36 @@ def test_cancelled_item_is_not_sent_to_the_robot(hub, partner, robot):
     time.sleep(QUIET_SECONDS)
     sent = robot.dispatches_for(order_id)[0]
     assert [i["name"] for i in sent["items"]] == ["Cold brew"]
+
+
+# Bad data. "Each key in data is an item id", and nothing says an id can't contain a comma.
+
+def test_item_id_with_commas_is_kept_as_one_id(hub, partner):
+    order_number = partner_order_number()
+
+    item = list(partner_items(order_number, "Cold brew").values())[0]
+    item_id = f"cold-brew,{order_number},1"
+
+    partner.enqueue(partner_response({item_id: item}))
+
+    order = wait_for_partner_order(hub, order_number)
+    assert [(i["key"], i["name"]) for i in order["items"]] == [(item_id, "Cold brew")]
+
+
+# One item OrderHub can't read (a price sent as text) must not cost the other orders in the same response.
+# "Nothing that happens upstream may be lost."
+
+@pytest.mark.xfail(strict=True, reason="L37-018: one malformed item loses every order in the same partner response")
+def test_one_malformed_item_does_not_lose_other_orders(hub, partner):
+    good_order = partner_order_number()
+    bad_order = partner_order_number()
+
+    items = partner_items(good_order, "Bagel")
+    bad_items = partner_items(bad_order, "Latte")
+
+    for item in bad_items.values():
+        item["price"] = "4.25"
+
+    partner.enqueue(partner_response({**items, **bad_items}))
+
+    wait_for_partner_order(hub, good_order)

@@ -68,3 +68,4 @@ decided, and I'm happy to walk through the session in the interview.
 | 5 | Partner API tests; defects L37-005 to L37-009 |
 | 6 | Dispatch tests with a slow or failing robot; defects L37-010 to L37-012 |
 | 7 | Survey CSV tests; defects L37-013 to L37-016 |
+| 8 | Bad-data corpus and tests; defects L37-017 to L37-021 |
