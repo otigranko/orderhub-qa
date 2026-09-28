@@ -24,6 +24,9 @@ ROBOT_PORT = int(os.environ.get("ROBOT_PORT", "18181"))
 ORDERHUB_URL = f"http://127.0.0.1:{ORDERHUB_PORT}"
 MOCK_API_URL = f"http://127.0.0.1:{MOCK_API_PORT}"
 
+# The kitchen's time zone. Must match OrderHub's -site-tz, which defaults to this.
+SITE_TZ = os.environ.get("SITE_TZ", "America/New_York")
+
 # Where OrderHub's logs and database for a test run go. Kept after the run for debugging.
 RESULTS_DIR = REPO_ROOT / "results"
 

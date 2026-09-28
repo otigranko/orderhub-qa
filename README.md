@@ -60,7 +60,7 @@ Tests that reproduce a known bug are marked `xfail` with the defect id from
 the run, so the suite stays green while the bugs are open, and still tells you each bug is there:
 
 ```
-9 passed, 14 xfailed
+13 passed, 22 xfailed
 ```
 
 They use `strict=True`: when a bug is fixed, its test starts passing, pytest reports it as a
@@ -106,4 +106,5 @@ debugging a failure or attaching to a defect report.
 | `ORDERHUB_PORT` | `18080` (`8080` with `QA_EXTERNAL=1`) | OrderHub port |
 | `MOCK_API_PORT` | `18090` (`8090` with `QA_EXTERNAL=1`) | Mock partner API port |
 | `ROBOT_PORT` | `18181` | Port for the robot receiver |
+| `SITE_TZ` | `America/New_York` | The kitchen's time zone; must match OrderHub's `-site-tz` |
 | `QA_TIMEOUT` | `10` | Seconds to wait for async outcomes (polling, dispatch) |

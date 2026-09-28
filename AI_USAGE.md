@@ -53,15 +53,16 @@ decided, and I'm happy to walk through the session in the interview.
 - Ran each step's tests on my own machine before committing.
 - Asked for an explanation of every piece of code I didn't understand, and removed what I
   couldn't justify.
-- Checked that each defect's steps reproduce against `make run`.
+- Checked that each defect's steps reproduce against `make run`. Check data used in defects.
 
 ## Log by step
 
-| Step | What | Commit |
-| --- | --- | --- |
-| 1 | Harness skeleton, API clients, smoke test per pipeline | Initial commit, smoke tests + config |
-| 2 | Test strategy draft: what we protect, risks R1 to R14, approach | Add test strategy |
-| 3 | Tests start their own OrderHub; robot receiver checks exactly-once dispatch | Add server to run with tests |
-| 4 | Webhook tests; defects L37-001 to L37-004 | Add defects, add test |
-| 5 | Partner API tests; defects L37-005 to L37-009 | Partner API tests and defects L37-005 to L37-009 |
-| 6 | Dispatch tests with a slow or failing robot; defects L37-010 to L37-012 | Dispatch tests and defects L37-010 to L37-012 |
+| Step | What |
+| --- | --- |
+| 1 | Harness skeleton, API clients, smoke test per pipeline |
+| 2 | Test strategy draft: what we protect, risks R1 to R14, approach |
+| 3 | Tests start their own OrderHub; robot receiver checks exactly-once dispatch |
+| 4 | Webhook tests; defects L37-001 to L37-004 |
+| 5 | Partner API tests; defects L37-005 to L37-009 |
+| 6 | Dispatch tests with a slow or failing robot; defects L37-010 to L37-012 |
+| 7 | Survey CSV tests; defects L37-013 to L37-016 |
