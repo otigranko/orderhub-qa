@@ -17,6 +17,7 @@ harness/          reusable test tooling
   robot_sink.py   stands in for the robot: records every dispatch, can be made slow or reject orders
   services.py     starts OrderHub and the mock partner API for a test run
 tests/            pytest suites
+tools/inject.py   sends orders into OrderHub by hand (see "Sending orders by hand" below)
 defects/          defects.xlsx: every defect found, with steps, data and evidence
 data/corpus/      bad-data files, sent as raw bytes (see "Bad-data corpus" below)
 results/          logs and database from the last run (not committed)
@@ -24,7 +25,7 @@ results/          logs and database from the last run (not committed)
 
 ## Setup
 
-Requires Python 3.10+.
+Requires Python 3.9+.
 
 ```sh
 python3 -m venv .venv
@@ -108,6 +109,24 @@ files' line endings. To add a case, add a file and add its name to the matching 
 
 Partner API cases are built in `tests/test_partner_api.py` instead, because the mock partner API
 only accepts valid JSON.
+
+### Sending orders by hand
+
+`tools/inject.py` sends orders into the OrderHub you started with `make run` (ports 8080 and
+8090), for exploring, demos, or checking a defect without long curl commands. Run it from this
+repo:
+
+```sh
+python -m tools.inject webhook                      # one webhook order
+python -m tools.inject webhook --count 50           # 50 at the same moment, like a burst
+python -m tools.inject partner                      # one partner order, picked up on the next poll
+python -m tools.inject partner --status cancelled   # a partner order that arrives already cancelled
+python -m tools.inject csv --rows 10                # a survey upload with 10 rows
+python -m tools.inject file webhook/truncated.json  # any file from data/corpus/
+python -m tools.inject reset-mock                   # clear the mock partner API
+```
+
+It prints OrderHub's answer for each request, for example `202 {"id":5}`.
 
 ## Configuration
 

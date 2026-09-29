@@ -65,6 +65,10 @@ class MockPartnerClient:
     def enqueue(self, response):
         return self.http.post(f"{self.base}/enqueue", json=response, timeout=self.timeout)
 
+    # Clears everything enqueued.
+    def reset(self):
+        return self.http.post(f"{self.base}/reset", timeout=self.timeout)
+
     # How many responses the mock has recorded, and how many of them are failures.
     def status(self):
         r = self.http.get(f"{self.base}/status", timeout=self.timeout)

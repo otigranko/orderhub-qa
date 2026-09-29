@@ -95,12 +95,13 @@ def test_row_with_unknown_meal_is_rejected(hub):
 
 @pytest.mark.xfail(strict=True, reason="L37-015: tomorrow=TRUE and other values are silently treated as today")
 def test_tomorrow_in_capitals_means_tomorrow(hub):
-    row = survey_row(meal="dinner", tomorrow="TRUE")
+    lower = survey_row(meal="dinner", tomorrow="true")
+    upper = survey_row(meal="dinner", tomorrow="TRUE")
 
-    hub.upload_csv(survey_csv([row]))
+    hub.upload_csv(survey_csv([lower, upper]))
 
-    order = orders_for(hub, row["last_name"])[0]
-    assert order["ready_at"][:10] == expected_ready_at("dinner", tomorrow=True)[:10]
+    # Compared with "true", not with a date, so the result doesn't depend on the time of day (L37-013).
+    assert orders_for(hub, upper["last_name"])[0]["ready_at"] == orders_for(hub, lower["last_name"])[0]["ready_at"]
 
 
 @pytest.mark.xfail(strict=True, reason="L37-015: tomorrow=TRUE and other values are silently treated as today")
