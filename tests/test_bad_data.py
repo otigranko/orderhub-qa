@@ -74,8 +74,8 @@ def test_special_characters_reach_the_robot_unchanged(hub, robot):
     sent = json.loads(body)
 
     order_id = hub.post_webhook_raw(body).json()["id"]
-
     assert_dispatched_once(robot, order_id)
+
     payload = robot.dispatches_for(order_id)[0]
     assert [i["name"] for i in payload["items"]] == sent["items"]
     assert payload["notes"] == sent["notes"]
@@ -94,6 +94,7 @@ def test_quotes_commas_and_new_lines_inside_fields_are_read_correctly(hub):
     assert result["created"] == 2 and result["errors"] == []
     orders = {o["customer_first"]: o for o in csv_orders(hub, tag)}
     lena, marcus = orders["Lena"], orders["Marcus"]
+
     assert lena["customer_last"] == f"Cho-{tag}, Jr."
     assert [i["name"] for i in lena["items"]] == ['Bagel "everything"', "Orange juice"]
     assert lena["notes"] == 'Say "hi", then knock'
@@ -107,8 +108,8 @@ def test_file_with_windows_line_endings_is_read_correctly(hub):
     body, tag = corpus.load("csv/windows_line_endings.csv")
 
     result = hub.upload_csv_raw(body).json()
-
     assert result["created"] == 2 and result["errors"] == []
+
     orders = {o["customer_first"]: o for o in csv_orders(hub, tag)}
     assert [i["name"] for i in orders["Lena"]["items"]] == ["Bagel", "Orange juice"]
     assert [i["name"] for i in orders["Marcus"]["items"]] == ["Soup", "Bread"]
@@ -144,8 +145,7 @@ def test_file_with_a_byte_order_mark_is_read_correctly(hub):
     "stray_quote.csv",
     "short_row.csv",
     pytest.param("unterminated_quote.csv", marks=pytest.mark.xfail(
-        strict=True, reason="L37-019: an unterminated quote silently drops every row after it")),
-])
+        strict=True, reason="L37-019: an unterminated quote silently drops every row after it")), ])
 def test_one_bad_row_does_not_lose_the_other_rows(hub, name):
     body, tag = corpus.load(f"csv/{name}")
 

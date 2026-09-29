@@ -61,6 +61,7 @@ class MockPartnerClient:
         self.http = requests.Session()
         self.timeout = timeout
 
+    # adds one response to the mock's history, stamped with the current time
     def enqueue(self, response):
         return self.http.post(f"{self.base}/enqueue", json=response, timeout=self.timeout)
 

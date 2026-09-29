@@ -22,7 +22,7 @@ def item_with_name(items, name):
 
 
 # "The API sometimes fails with a 500, and a retry of the same request succeeds.
-#  Nothing that happens upstream may be lost."
+#  Nothing that happens upstream may be lost.". See Notes in spreadsheet
 
 @pytest.mark.xfail(strict=True, reason="L37-005: orders in the same poll window as a partner API 500 are lost")
 def test_order_in_the_same_window_as_a_500_is_not_lost(hub, partner):
@@ -70,6 +70,7 @@ def test_status_update_for_one_item_keeps_the_other_items(hub, partner):
     order_number = partner_order_number()
     items = partner_items(order_number, "Cold brew", "Blueberry pancakes")
     partner.enqueue(partner_response(items))
+
     order_id = wait_for_partner_order(hub, order_number)["id"]
 
     cold_brew = item_with_name(items, "Cold brew")
