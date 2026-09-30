@@ -52,8 +52,7 @@ decided, and I'm happy to walk through the session in the interview.
 ## How I checked the AI's work
 
 - Ran each step's tests on my own machine before committing.
-- Asked for an explanation of every piece of code I didn't understand, and removed what I
-  couldn't justify.
+- Asked for an explanation of every piece that's not clear, and removed what I couldn't justify.
 - Checked that each defect's steps reproducible against `make run`. Check data used in defects.
 - Update steps and data in Excel 
 
