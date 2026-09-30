@@ -29,26 +29,41 @@ class Services:
                 raise RuntimeError(f"{path} not found. Run `make build` in {config.ORDERHUB_DIR}.")
 
         config.RESULTS_DIR.mkdir(exist_ok=True)
-        for old in config.RESULTS_DIR.glob("orderhub.db*"):
+        for old in [*config.RESULTS_DIR.glob("orderhub.db*"), *config.RESULTS_DIR.glob("*.log")]:
             old.unlink()
 
         self.run(config.MOCK_API_BIN, "mockapi.log",
                  "-addr", f"127.0.0.1:{config.MOCK_API_PORT}")
-        self.run(config.ORDERHUB_BIN, "orderhub.log",
-                 "-addr", f"127.0.0.1:{config.ORDERHUB_PORT}",
-                 "-db", str(config.RESULTS_DIR / "orderhub.db"),
-                 "-api-url", config.MOCK_API_URL,
-                 "-robot-url", self.robot_url,
-                 "-frontend", str(config.FRONTEND_DIR))
-
         wait_until(lambda: is_up(f"{config.MOCK_API_URL}/status"), message="mock partner API did not start")
+        self.start_orderhub()
+
+    # Starts OrderHub on this run's database. Also used to start it again after stop_orderhub().
+    def start_orderhub(self):
+        self.orderhub = self.run(config.ORDERHUB_BIN, "orderhub.log",
+                                 "-addr", f"127.0.0.1:{config.ORDERHUB_PORT}",
+                                 "-db", str(config.RESULTS_DIR / "orderhub.db"),
+                                 "-api-url", config.MOCK_API_URL,
+                                 "-robot-url", self.robot_url,
+                                 "-frontend", str(config.FRONTEND_DIR))
         wait_until(lambda: is_up(f"{config.ORDERHUB_URL}/healthz"),
                    message=f"OrderHub did not start, see {config.RESULTS_DIR / 'orderhub.log'}")
 
+    # Stops OrderHub the way a deploy does. With crash=True, the way a crash does: no time to
+    # finish what it was doing. The database and the mock partner API stay, like in production.
+    def stop_orderhub(self, crash=False):
+        if crash:
+            self.orderhub.kill()
+        else:
+            self.orderhub.terminate()
+        self.orderhub.wait(timeout=5)
+
+    # Logs are added to, not replaced, so a restart keeps OrderHub's earlier lines.
     def run(self, binary, log_name, *args):
-        log = open(config.RESULTS_DIR / log_name, "w")
+        log = open(config.RESULTS_DIR / log_name, "a")
         self.logs.append(log)
-        self.processes.append(subprocess.Popen([str(binary), *args], stdout=log, stderr=subprocess.STDOUT))
+        process = subprocess.Popen([str(binary), *args], stdout=log, stderr=subprocess.STDOUT)
+        self.processes.append(process)
+        return process
 
     def stop(self):
         for p in self.processes:

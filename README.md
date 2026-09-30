@@ -64,7 +64,7 @@ Tests that reproduce a known bug are marked `xfail` with the defect id from
 the run, so the suite stays green while the bugs are open, and still tells you each bug is there:
 
 ```
-27 passed, 32 xfailed
+28 passed, 34 xfailed
 ```
 
 They use `strict=True`: when a bug is fixed, its test starts passing, pytest reports it as a
@@ -95,6 +95,8 @@ QA_EXTERNAL=1 python -m pytest --runxfail -k same_order_id       # one known bug
 
 In this mode the tests use OrderHub on 8080 and the mock on 8090, and only start the robot
 receiver. Every test uses unique ids, so data already in your database doesn't get in the way.
+The restart tests (`tests/test_restart.py`) are skipped in this mode, because they stop and start
+OrderHub, and they can't do that to yours.
 When no test run is active, nothing listens on 18181, so orders you send by hand stay `queued`.
 For the curl steps in `defects/defects.xlsx`, use plain `make run` instead.
 

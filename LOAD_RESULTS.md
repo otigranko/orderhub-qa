@@ -147,8 +147,10 @@ the export made the upload about 4 times slower.
   load there are more races.
 - Colliding order ids. Here every platform's ids are unique. Real platforms number their own
   orders, so the same id from two platforms (L37-001) would lose orders at any load.
-- Restarts. What happens to partner orders while OrderHub is down, for example after the survey
-  crash, is the next test (step 11).
+- Restarts under load. `tests/test_restart.py` restarts OrderHub with a few orders in flight:
+  partner orders placed while it is down are lost (L37-024), and an order being sent at the moment
+  of a crash is sent again (L37-025). A crash in the middle of a busy burst would resend every
+  order being sent at that moment.
 
 ## Next steps
 
