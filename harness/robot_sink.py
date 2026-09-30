@@ -6,6 +6,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 # Stands in for the robot. OrderHub POSTs each dispatch here (-robot-url),
 # and we keep every payload so tests can check what the robot received.
+
 # Tests can also make it misbehave:
 #   delay      seconds to wait before answering, like a slow robot (it still builds the order)
 #   fail_next  how many of the next dispatches to reject with a 500 (those are not built)

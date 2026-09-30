@@ -3,6 +3,7 @@
 Test strategy, harness, and automated tests for OrderHub (order ingestion and dispatch).
 
 The plan and the reasoning behind it are in [TEST_STRATEGY.md](TEST_STRATEGY.md).
+Load test results are in [LOAD_RESULTS.md](LOAD_RESULTS.md).
 How I used AI is in [AI_USAGE.md](AI_USAGE.md).
 
 ## Layout
@@ -18,6 +19,8 @@ harness/          reusable test tooling
   services.py     starts OrderHub and the mock partner API for a test run
 tests/            pytest suites
 tools/inject.py   sends orders into OrderHub by hand (see "Sending orders by hand" below)
+tools/load.py     bursty load, then counts lost and duplicated orders (see "Load tests" below)
+tools/csv_growth.py  how survey upload time grows as the export grows
 defects/          defects.xlsx: every defect found, with steps, data and evidence
 data/corpus/      bad-data files, sent as raw bytes (see "Bad-data corpus" below)
 results/          logs and database from the last run (not committed)
@@ -127,6 +130,23 @@ python -m tools.inject reset-mock                   # clear the mock partner API
 ```
 
 It prints OrderHub's answer for each request, for example `202 {"id":5}`.
+
+### Load tests
+
+`tools/load.py` sends the peak hour of 100,000 orders a day in bursts, across all three
+pipelines, then compares what was sent, what OrderHub stored, and what the robot received.
+Like the tests, it starts its own OrderHub, so `make run` isn't touched.
+
+```sh
+python -m tools.load                    # 3 minutes at the expected peak
+python -m tools.load --scale 5          # five times that
+python -m tools.load --burst-every 10   # the same orders, in bigger bursts
+python -m tools.csv_growth              # survey upload time as the export grows
+```
+
+The traffic model, results and what they mean are in [LOAD_RESULTS.md](LOAD_RESULTS.md).
+`tools.csv_growth` stops at the first upload with no answer in 30 seconds and stops OrderHub,
+because by then OrderHub is using more and more memory (L37-022).
 
 ## Configuration
 
