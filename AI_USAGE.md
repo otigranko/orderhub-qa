@@ -71,3 +71,4 @@ decided, and I'm happy to walk through the session in the interview.
 | 9 | Inject tool for sending orders by hand; mock reset in the partner client |
 | 10 | Load generator and survey upload growth; results; defects L37-022 and L37-023 |
 | 11 | Restart tests: stop and crash OrderHub mid-run; defects L37-024 and L37-025 |
+| 12 | UI tests with Playwright, starting from my own manual finding (Cancel selected stays at 0); defects L37-026 to L37-029 |

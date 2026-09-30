@@ -22,6 +22,7 @@ tools/inject.py   sends orders into OrderHub by hand (see "Sending orders by han
 tools/load.py     bursty load, then counts lost and duplicated orders (see "Load tests" below)
 tools/csv_growth.py  how survey upload time grows as the export grows
 defects/          defects.xlsx: every defect found, with steps, data and evidence
+  screenshots/    what the UI showed, for the UI defects
 data/corpus/      bad-data files, sent as raw bytes (see "Bad-data corpus" below)
 results/          logs and database from the last run (not committed)
 ```
@@ -34,6 +35,7 @@ Requires Python 3.9+.
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+playwright install chromium   # the browser for the UI tests, once
 ```
 
 This repo expects the OrderHub checkout next to it (`../orderhub`). The tests run its built
@@ -48,14 +50,43 @@ Point `ORDERHUB_DIR` elsewhere if your checkout lives somewhere else.
 ## Running
 
 ```sh
-python -m pytest              # everything
-python -m pytest -m smoke     # just the smoke tests
+python -m pytest                   # everything
+python -m pytest -m smoke          # just the smoke tests
+python -m pytest -m "not ui"       # everything except the browser tests
+python -m pytest -m ui --headed    # the UI tests, in a browser window you can watch
 ```
 
 You don't need to start OrderHub yourself. Each test run starts its own OrderHub and mock
 partner API on a fresh database, with robot dispatches sent to a receiver inside the test run.
 Everything is stopped when the run ends. It uses different ports from `make run`, so you can
 keep your own instance running at the same time.
+
+### UI tests
+
+`tests/test_ui.py` checks what the operator sees in the OrderHub UI, in a real browser. It uses
+Playwright through the `pytest-playwright` plugin, which is in `requirements.txt`. Each test
+creates its orders through the API, then checks and clicks in the browser.
+
+Install, once, after `pip install -r requirements.txt`:
+
+```sh
+playwright install chromium
+```
+
+This downloads the Chromium browser that Playwright drives. It doesn't touch your own Chrome.
+
+Run:
+
+```sh
+python -m pytest -m ui                                     # all UI tests, no browser window
+python -m pytest -m ui --headed --slowmo 500               # watch them in a browser window, slowed down
+python -m pytest -m ui -k tick_stays --headed --runxfail   # one known bug, real failure, in a window
+python -m pytest -m ui --screenshot only-on-failure --output results/ui   # screenshots of failures
+```
+
+The browser runs in the kitchen's time zone (`SITE_TZ`), as an operator at the site would see it.
+The UI tests also work with `QA_EXTERNAL=1` (see "Running against `make run`" below), against
+the UI of your own `make run`.
 
 ### Known defects in the test run
 
@@ -64,7 +95,7 @@ Tests that reproduce a known bug are marked `xfail` with the defect id from
 the run, so the suite stays green while the bugs are open, and still tells you each bug is there:
 
 ```
-28 passed, 34 xfailed
+29 passed, 38 xfailed
 ```
 
 They use `strict=True`: when a bug is fixed, its test starts passing, pytest reports it as a
