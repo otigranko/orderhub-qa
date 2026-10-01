@@ -21,6 +21,7 @@ def expected_ready_at(meal, tomorrow):
     site = ZoneInfo(config.SITE_TZ)
     day = datetime.now(site).date() + timedelta(days=1 if tomorrow else 0)
     local = datetime.combine(day, time(MEAL_HOURS[meal]), site)
+
     return local.astimezone(ZoneInfo("UTC")).strftime("%Y-%m-%d %H:%M:%S")
 
 

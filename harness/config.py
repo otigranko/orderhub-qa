@@ -3,16 +3,15 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
-# Path to the OrderHub checkout. We run its built binaries (`make build`) and read
-# the provided example payloads from it.
+# Path to the OrderHub checkout. We run its built binaries (`make build`) and read the provided example payloads from it
 ORDERHUB_DIR = Path(os.environ.get("ORDERHUB_DIR", REPO_ROOT.parent / "orderhub")).resolve()
 EXAMPLES_DIR = ORDERHUB_DIR / "data" / "examples"
 ORDERHUB_BIN = ORDERHUB_DIR / "bin" / "orderhub"
 MOCK_API_BIN = ORDERHUB_DIR / "bin" / "mockapi"
 FRONTEND_DIR = ORDERHUB_DIR / "frontend" / "dist"
 
-# QA_EXTERNAL=1 runs the tests against an OrderHub that is already running (for example
-# `make run`) instead of starting one. See "Running against make run" in the README.
+# QA_EXTERNAL=1 runs the tests against an OrderHub that is already running (for example `make run`) instead of
+# starting one. See "Running against make run" in the README.
 EXTERNAL = os.environ.get("QA_EXTERNAL") == "1"
 
 # By default the tests start their own OrderHub and mock partner API on ports different from

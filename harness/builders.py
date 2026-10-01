@@ -50,8 +50,8 @@ def partner_response(items):
 PARTNER_ERROR = {"response": 500, "error": "Internal server error"}
 
 
-# Survey CSV. last_name gets a unique suffix, so a test can find its own orders
-# and repeated test runs don't look like re-uploads of the same rows.
+# Survey CSV. last_name gets a unique suffix, so a test can find its own orders and repeated test runs don't look
+# like re-uploads of the same rows.
 SURVEY_COLUMNS = ["first_name", "last_name", "items", "notes", "tomorrow", "meal"]
 
 
@@ -65,6 +65,7 @@ def survey_row(**changes):
         "meal": "lunch",
     }
     row.update(changes)
+
     return row
 
 
@@ -73,4 +74,5 @@ def survey_csv(rows):
     writer = csv.DictWriter(out, fieldnames=SURVEY_COLUMNS)
     writer.writeheader()
     writer.writerows(rows)
+
     return out.getvalue()

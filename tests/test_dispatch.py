@@ -21,8 +21,7 @@ def times_made(robot, order_ids):
     return {order_id: len(robot.dispatches_for(order_id)) for order_id in order_ids}
 
 
-# "Each order is dispatched to the robot exactly once."
-# "Traffic is bursty."
+# "Each order is dispatched to the robot exactly once."  "Traffic is bursty."
 
 @pytest.mark.usefixtures("services")
 @pytest.mark.xfail(strict=True, reason="L37-010: orders are sent to the robot more than once when a batch takes over 1 second")

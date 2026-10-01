@@ -6,8 +6,7 @@ from harness.builders import PARTNER_ERROR, partner_items, partner_order_number,
 from harness.checks import QUIET_SECONDS, assert_dispatched_once, assert_never_dispatched
 from harness.client import wait_until
 
-# OrderHub polls the partner API every 2 seconds. Waiting 3 poll cycles is enough to be sure
-# an update was picked up.
+# OrderHub polls the partner API every 2 seconds. Waiting 3 poll cycles is enough to be sure an update was picked up.
 POLL_WAIT = 6
 
 

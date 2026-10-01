@@ -105,6 +105,7 @@ def main():
     pool = ThreadPoolExecutor(max_workers=200)
     start = time.monotonic()
     tick = 0
+
     while time.monotonic() - start < args.minutes * 60:
         if tick % PARTNER_500_EVERY == 0:
             partner.enqueue(PARTNER_ERROR)
@@ -147,6 +148,7 @@ def main():
     accepted = {order_id for order_id, ok, _ in webhook_results if ok}
     unique_webhooks = {o["order_id"] for o in webhooks}
     failed = unique_webhooks - accepted
+
     print()
     print(f"Webhook:  {len(unique_webhooks)} orders, {len(webhook_results)} requests "
           f"({len(webhook_results) - len(unique_webhooks)} retries), {len(failed)} orders never accepted")
@@ -154,12 +156,14 @@ def main():
     print(f"Partner:  {len(partner_orders)} orders, {partner_500s} partner 500s")
     print(f"Survey:   {len(csv_rows)} rows in {len(csv_uploads)} uploads, "
           f"{sum(1 for _, ok, _ in csv_uploads if not ok)} failed")
+
     for rows, ok, seconds in sorted(csv_uploads):
         print(f"          upload of {rows} rows took {seconds:.1f} s")
     print()
 
     expected = {"webhook": accepted, "api": set(partner_orders)}
     total_lost = total_duplicated = total_never = total_extra_builds = 0
+
     for source, sent in expected.items():
         lost = sent - set(stored[source])
         duplicated = [k for k, n in stored[source].items() if n > 1]
@@ -177,6 +181,7 @@ def main():
 
     csv_lost = [r["last_name"] for r in csv_rows if stored_csv[r["last_name"]] == 0]
     csv_twice = [r["last_name"] for r in csv_rows if stored_csv[r["last_name"]] > 1]
+
     print(f"{'csv':8}  rows {len(csv_rows)}, stored {len(csv_rows) - len(csv_lost)}, lost {len(csv_lost)}, "
           f"stored more than once {len(csv_twice)} (scheduled for tomorrow, so not dispatched in this run)")
     print()

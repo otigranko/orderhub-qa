@@ -61,7 +61,7 @@ decided, and I'm happy to walk through the session in the interview.
 | Step | What |
 | --- | --- |
 | 1 | Harness skeleton, API clients, smoke test per pipeline |
-| 2 | Test strategy draft: what we protect, risks R1 to R14, approach |
+| 2 | Test strategy draft: what we protect, approach |
 | 3 | Tests start their own OrderHub; robot receiver checks exactly-once dispatch |
 | 4 | Webhook tests; defects L37-001 to L37-004 |
 | 5 | Partner API tests; defects L37-005 to L37-009 |
@@ -72,3 +72,4 @@ decided, and I'm happy to walk through the session in the interview.
 | 10 | Load generator and survey upload growth; results; defects L37-022 and L37-023 |
 | 11 | Restart tests: stop and crash OrderHub mid-run; defects L37-024 and L37-025 |
 | 12 | UI tests with Playwright, starting from my own manual finding (Cancel selected stays at 0); defects L37-026 to L37-029 |
+| 13 | Finished the test strategy (levels, merging and state, fault tolerance, robot boundary, CI and release, trade-offs), defect list, release recommendation, next steps; README overview |

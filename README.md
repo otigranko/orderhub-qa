@@ -2,9 +2,22 @@
 
 Test strategy, harness, and automated tests for OrderHub (order ingestion and dispatch).
 
-The plan and the reasoning behind it are in [TEST_STRATEGY.md](TEST_STRATEGY.md).
-Load test results are in [LOAD_RESULTS.md](LOAD_RESULTS.md).
-How I used AI is in [AI_USAGE.md](AI_USAGE.md).
+Testing found 29 defects, 7 of them Critical: OrderHub loses orders, makes some orders twice,
+and can be crashed by one survey upload. 
+
+| The assignment asks for | Where it is |
+| --- | --- |
+| Test strategy: risks, test levels, merging and state, fault tolerance, the robot boundary, CI and release, trade-offs | [TEST_STRATEGY.md](TEST_STRATEGY.md) |
+| Drivers for the three pipelines, fixtures and test data | `harness/` |
+| Injecting orders on demand | `tools/inject.py`, see "Sending orders by hand" below |
+| Load generator, bursty, at and above 100,000 a day | `tools/load.py` and `tools/csv_growth.py`, see "Load tests" below |
+| Capturing what is sent to the robot | `harness/robot_sink.py` |
+| Automated tests, one command | `tests/`, run with `python -m pytest` |
+| Bad-data corpus | `data/corpus/` and `tests/test_bad_data.py` |
+| Defect reports | `defects/defects.xlsx`, with screenshots in `defects/screenshots/`. A list of all defects is in [TEST_STRATEGY.md](TEST_STRATEGY.md), section 11, for reading on GitHub. |
+| Load test results | [LOAD_RESULTS.md](LOAD_RESULTS.md) |
+| Next steps and questions for the dev team | [TEST_STRATEGY.md](TEST_STRATEGY.md), section 13 |
+| AI log | [AI_USAGE.md](AI_USAGE.md) |
 
 ## Layout
 
@@ -18,8 +31,8 @@ harness/          reusable test tooling
   robot_sink.py   stands in for the robot: records every dispatch, can be made slow or reject orders
   services.py     starts OrderHub and the mock partner API for a test run
 tests/            pytest suites
-tools/inject.py   sends orders into OrderHub by hand (see "Sending orders by hand" below)
-tools/load.py     bursty load, then counts lost and duplicated orders (see "Load tests" below)
+tools/inject.py   sends orders into OrderHub by hand
+tools/load.py     bursty load, then counts lost and duplicated orders
 tools/csv_growth.py  how survey upload time grows as the export grows
 defects/          defects.xlsx: every defect found, with steps, data and evidence
   screenshots/    what the UI showed, for the UI defects
@@ -56,10 +69,9 @@ python -m pytest -m "not ui"       # everything except the browser tests
 python -m pytest -m ui --headed    # the UI tests, in a browser window you can watch
 ```
 
-You don't need to start OrderHub yourself. Each test run starts its own OrderHub and mock
-partner API on a fresh database, with robot dispatches sent to a receiver inside the test run.
-Everything is stopped when the run ends. It uses different ports from `make run`, so you can
-keep your own instance running at the same time.
+You don't need to start OrderHub yourself. Each test run starts its own OrderHub and mock partner API on a fresh 
+database, with robot dispatches sent to a receiver inside the test run. Everything is stopped when the run ends. 
+It uses different ports from `make run`, so you can keep your own instance running at the same time.
 
 ### UI tests
 

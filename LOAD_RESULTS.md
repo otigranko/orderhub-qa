@@ -1,13 +1,12 @@
 # Load results
 
-The question behind these runs is the same one as the rest of the testing: under realistic,
-bursty traffic, does every order reach the robot exactly once, and is any order lost?
+The question behind these runs is the same one as the rest of the testing: under realistic, bursty traffic, 
+does every order reach the robot exactly once, and is any order lost?
 
-Short answer: at the expected peak of 100,000 orders a day every webhook order was made exactly
-once, but OrderHub has no headroom. The same daily volume in slightly bigger bursts, or twice
-the volume, makes the robot build orders twice, and at 5 to 10 times the load most orders are
-built several times. Partner orders are lost at every load. And a single large survey upload
-can crash OrderHub completely.
+Short answer: at the expected peak of 100,000 orders a day every webhook order was made exactly once, but OrderHub 
+has no headroom. The same daily volume in slightly bigger bursts, or twice the volume, makes the robot build orders 
+twice, and at 5 to 10 times the load most orders are built several times. Partner orders are lost at every load. 
+And a single large survey upload can crash OrderHub completely.
 
 ## How to run it
 
@@ -34,8 +33,7 @@ It's not a container, just ordinary processes that don't share ports or files wi
 | Robot | writes to `data/robot_dispatch.jsonl` | posts to our robot receiver on 18181 (`-robot-url`) |
 | Stopped by | you, with Ctrl-C | the script, when it finishes |
 
-The code is identical, so a bug found in one is in the other. What they do share is the
-machine's memory and CPU.
+The code is identical, so a bug found in one is in the other. What they do share is the machine's memory and CPU.
 
 ## Traffic model
 
@@ -52,8 +50,8 @@ runs the peak hour instead of the whole day.
 | Survey | whole export uploaded every 30 s, 50 new rows each time | "Each export contains every response so far." |
 | Robot | 30 ms to accept each order | OrderHub's own simulated robot takes 15 to 40 ms, "similar to the real controller's ack time". |
 
-Every order has a unique id, so a duplicate can only come from OrderHub itself. After the run
-the tool waits until OrderHub has stopped storing and dispatching, then compares three lists:
+Every order has a unique id, so a duplicate can only come from OrderHub itself. After the run the tool waits until 
+OrderHub has stopped storing and dispatching, then compares three lists:
 what was sent, what OrderHub stored, and what the robot received.
 
 ## Results
